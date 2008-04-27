@@ -1,4 +1,4 @@
-import sys, subprocess, optparse, logging
+import os, sys, signal, subprocess, optparse, logging
 
 logger = logging.getLogger('rpatterson.mailsync')
 
@@ -25,6 +25,12 @@ class Watcher(object):
             if line:
                 self.checker(*line.strip().split())
                 yield line
+
+    def __del__(self):
+        """Ensure the watcher process is always killed on exit"""
+        if self.watcher.poll() is None:
+            os.kill(self.watcher.pid, signal.SIGTERM)
+            self.watcher.wait()
 
 def main(args=None):
     parser = optparse.OptionParser()

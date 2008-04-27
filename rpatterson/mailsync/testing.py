@@ -21,6 +21,4 @@ def setUp(test):
         watcher_script=watcher_script, tmp=tmp, maildir=maildir, foo=foo)
 
 def tearDown(test):
-    os.kill(test.globs['script_watcher'].pid, signal.SIGTERM)
-    os.kill(test.globs['watcher'].watcher.pid, signal.SIGTERM)
     shutil.rmtree(test.globs['tmp'])
