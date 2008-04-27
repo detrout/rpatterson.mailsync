@@ -27,6 +27,10 @@ README = os.path.join(
 
 long_description = open(README).read() + '\n\n'
 
+tests_require = [
+        'zope.testing',
+    ]
+
 setup(name='rpatterson.mailsync',
       version=version,
       description="",
@@ -45,13 +49,17 @@ setup(name='rpatterson.mailsync',
       namespace_packages=['rpatterson'],
       include_package_data=True,
       zip_safe=False,
-      # uncomment this to be able to run tests with setup.py
       install_requires=[
           'setuptools',
           # -*- Extra requirements: -*-
       ],
+      test_suite = "rpatterson.mailsync.tests.test_suite",
+      tests_require=tests_require,
+      extras_require=dict(test=tests_require),
       entry_points="""
       # -*- Entry points: -*-
+      [console_scripts]
+      mailsync_watch = rpatterson.mailsync.watch:main
       """,
       )
 

@@ -1,0 +1,91 @@
+========
+Watchers
+========
+
+Watchers are responsible for responding to changes to maildirs.
+Watchers use a checker to do anything necessary before passing the
+notification on, such as allowing a MUA or other process to move
+messages.  Finally, the watcher passes the notification on to mswatch.
+
+We start out with a maildir with one contained maildir.
+
+    >>> import os
+    >>> os.listdir(maildir)
+    ['tmp', 'new', '.foo', 'cur']
+    >>> os.listdir(foo)
+    ['tmp', 'new', 'cur']
+
+Start with a checker that simply prints the folders it was told to
+check.
+
+    >>> def printChecker(*folders):
+    ...     print 'printChecker: '+' '.join(folders)
+
+Setup a watcher on the maildir.
+
+    >>> from rpatterson.mailsync import watch
+    >>> watcher = watch.Watcher(
+    ...     maildir=maildir, checker=printChecker)
+    >>> watcher_iter = iter(watcher)
+
+When the watcher first starts up, it returns a newline signaling that
+it has started up, but before it does so, it tells the mua to do what
+it will on startup.
+
+    >>> print watcher_iter.next(),
+    printChecker: 
+    <BLANKLINE>
+
+Add a file to the contained maildir.  The checker will first check
+that folder and then emit the folder name.
+
+    >>> message = open(os.path.join(foo, 'new', '0'), mode='w')
+    >>> message.write('To: foo\n')
+    >>> message.close()
+
+    >>> print watcher_iter.next(),
+    printChecker: foo
+    foo
+
+Setup a checker that moves a message from the INBOX to the subfolder.
+
+    >>> inbound = os.path.join(maildir, 'new', '0')
+    >>> def moveChecker(*folders):
+    ...     print 'moveChecker: '+' '.join(folders)
+    ...     if folders[0] == 'INBOX' and os.path.isfile(inbound):
+    ...         os.rename(inbound, os.path.join(foo, 'new', '1'))
+    ...         print ('moveChecker: '
+    ...                'moved Maildir/new/0 to Maildir/.foo/new/1')
+    >>> watcher.checker = moveChecker
+
+Add a file to the INBOX.
+
+    >>> message = open(os.path.join(maildir, 'new', '0'), mode='w')
+    >>> message.write('To: bar\n')
+    >>> message.close()
+
+First, the watcher will note the addition to the INBOX and will check
+the mail in that folder.  The checker will report this and move the
+file to the subfolder.
+
+    >>> print watcher_iter.next(),
+    moveChecker: INBOX
+    moveChecker: moved Maildir/new/0 to Maildir/.foo/new/1
+    INBOX
+
+Next, the watcher will note the removal from the INBOX folder and the
+addition to the subfolder and will check the mail in both locations.
+
+    >>> print watcher_iter.next(),
+    moveChecker: INBOX
+    INBOX
+    >>> print watcher_iter.next(),
+    moveChecker: foo
+    foo
+
+Shutdown the watcher.
+
+    >>> import os, signal
+    >>> os.kill(watcher.watcher.pid, signal.SIGTERM)
+    >>> for line in watcher_iter:
+    ...     print line,
