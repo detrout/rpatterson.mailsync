@@ -1,11 +1,13 @@
-import subprocess, optparse, pkg_resources, tempfile
+import subprocess, optparse, pkg_resources, logging
+
+logger = logging.getLogger('rpatterson.mailsync')
 
 class Watcher(object):
 
     def __init__(self, maildir, checker):
-        self.watcher = subprocess.Popen(
-            ['watch_maildirs', '--maildir=%s' % maildir],
-            stdout=subprocess.PIPE)
+        args = ['watch_maildirs', '--maildir=%s' % maildir]
+        logger.info("Running '%s'" % ' '.join(args))
+        self.watcher = subprocess.Popen(args , stdout=subprocess.PIPE)
         self.checker = checker
 
     def __iter__(self):
