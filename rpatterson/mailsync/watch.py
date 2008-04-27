@@ -9,7 +9,8 @@ class Watcher(object):
     def __init__(self, maildir, checker):
         args = ['watch_maildirs', '--maildir=%s' % maildir]
         logger.info("Running '%s'" % ' '.join(args))
-        self.watcher = subprocess.Popen(args , stdout=subprocess.PIPE)
+        self.watcher = subprocess.Popen(
+            args , stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         self.checker = checker
 
     # TODO iteration *should* work, but for some reason it blocks

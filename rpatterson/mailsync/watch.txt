@@ -20,7 +20,7 @@ folders it was told to check.
 
     >>> import subprocess
     >>> script_watcher = subprocess.Popen(
-    ...     [watcher_script, maildir,
+    ...     ['inputkill', watcher_script, maildir,
     ...      'rpatterson.mailsync.testing:PrintingChecker'],
     ...     stdout=subprocess.PIPE)
 
