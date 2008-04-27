@@ -6,7 +6,7 @@ from rpatterson.mailsync import testing
 def test_suite():
     return doctest.DocFileSuite(
         'watch.txt',
-        setUp=testing.setUp,
+        setUp=testing.setUp, tearDown=testing.tearDown,
         optionflags=(
             doctest.ELLIPSIS|
             doctest.REPORT_NDIFF))

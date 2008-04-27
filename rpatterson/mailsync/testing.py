@@ -1,4 +1,4 @@
-import os, tempfile, subprocess
+import os, signal, tempfile, subprocess, shutil
 
 class PrintingChecker(object):
 
@@ -9,7 +9,7 @@ def makeMaildir(*path):
     subprocess.Popen(['maildirmake', os.path.join(*path)]).wait()
 
 def setUp(test):
-    watcher = os.path.join(
+    watcher_script = os.path.join(
         os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
         'bin', 'mailsync_watch')
     tmp = tempfile.mkdtemp()
@@ -18,4 +18,9 @@ def setUp(test):
     foo = os.path.join(maildir, '.foo')
     makeMaildir(foo)
     test.globs.update(
-        watcher=watcher, tmp=tmp, maildir=maildir, foo=foo)
+        watcher_script=watcher_script, tmp=tmp, maildir=maildir, foo=foo)
+
+def tearDown(test):
+    os.kill(test.globs['script_watcher'].pid, signal.SIGTERM)
+    os.kill(test.globs['watcher'].watcher.pid, signal.SIGTERM)
+    shutil.rmtree(test.globs['tmp'])

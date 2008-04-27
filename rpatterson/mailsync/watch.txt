@@ -18,17 +18,19 @@ We start out with a maildir with one contained maildir.
 Setup a watcher on the maildir with a checker that simply prints the
 folders it was told to check.
 
-    >>> from rpatterson.mailsync import watch, testing
-    >>> watcher = watch.Watcher(
-    ...     maildir=maildir, checker=testing.PrintingChecker())
-    >>> watcher_iter = iter(watcher)
+    >>> import subprocess
+    >>> script_watcher = subprocess.Popen(
+    ...     [watcher_script, maildir,
+    ...      'rpatterson.mailsync.testing:PrintingChecker'],
+    ...     stdout=subprocess.PIPE)
 
 When the watcher first starts up, it returns a newline signaling that
 it has started up, but before it does so, it tells the mua to do what
 it will on startup.
 
-    >>> print watcher_iter.next(),
+    >>> print script_watcher.stdout.readline(),
     printChecker: 
+    >>> print script_watcher.stdout.readline(),
     <BLANKLINE>
 
 Add a file to the contained maildir.  The checker will first check
@@ -38,20 +40,30 @@ that folder and then emit the folder name.
     >>> message.write('To: foo\n')
     >>> message.close()
 
-    >>> print watcher_iter.next(),
+    >>> print script_watcher.stdout.readline(),
     printChecker: foo
+    >>> print script_watcher.stdout.readline(),
     foo
 
-Setup a checker that moves a message from the INBOX to the subfolder.
+Setup a new watcher with a checker that moves a message from the INBOX
+to the subfolder.
 
     >>> inbound = os.path.join(maildir, 'new', '0')
     >>> def moveChecker(*folders):
     ...     print 'moveChecker: '+' '.join(folders)
-    ...     if folders[0] == 'INBOX' and os.path.isfile(inbound):
+    ...     if folders and folders[0] == 'INBOX' and os.path.isfile(
+    ...         inbound):
     ...         os.rename(inbound, os.path.join(foo, 'new', '1'))
     ...         print ('moveChecker: '
     ...                'moved Maildir/new/0 to Maildir/.foo/new/1')
-    >>> watcher.checker = moveChecker
+
+    >>> from rpatterson.mailsync import watch, testing
+    >>> watcher = watch.Watcher(
+    ...     maildir=maildir, checker=moveChecker)
+    >>> watcher_iter = iter(watcher)
+    >>> print watcher_iter.next(),
+    moveChecker: 
+    <BLANKLINE>
 
 Add a file to the INBOX.
 
@@ -77,10 +89,3 @@ addition to the subfolder and will check the mail in both locations.
     >>> print watcher_iter.next(),
     moveChecker: foo
     foo
-
-Shutdown the watcher.
-
-    >>> import os, signal
-    >>> os.kill(watcher.watcher.pid, signal.SIGTERM)
-    >>> for line in watcher_iter:
-    ...     print line,

@@ -1,4 +1,4 @@
-import subprocess, optparse, logging
+import sys, subprocess, optparse, logging
 
 logger = logging.getLogger('rpatterson.mailsync')
 
@@ -11,6 +11,12 @@ class Watcher(object):
         logger.info("Running '%s'" % ' '.join(args))
         self.watcher = subprocess.Popen(args , stdout=subprocess.PIPE)
         self.checker = checker
+
+    # TODO iteration *should* work, but for some reason it blocks
+    # def __iter__(self):
+    #     for line in self.watcher.stdout:
+    #         self.checker(*line.strip().split())
+    #         yield line
 
     def __iter__(self):
         while self.watcher.poll() is None:
@@ -27,6 +33,7 @@ def main(args=None):
     checker = checker_factory(*args[2:])
     for line in Watcher(maildir=maildir, checker=checker):
         print line,
+        sys.stdout.flush()
 
 if __name__ == '__main__':
     main()
