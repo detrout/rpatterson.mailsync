@@ -1,6 +1,4 @@
-import logging, subprocess, pkg_resources
-
-logger = logging.getLogger('rpatterson.mailsync')
+import subprocess, pkg_resources
 
 class Checker(object):
 
@@ -9,15 +7,10 @@ class Checker(object):
 
     def __call__(self, *folders):
         args = self.getArgs(*folders)
-        logger.info("Running '%s'" % ' '.join(args))
         process = subprocess.Popen(
             args , stdin=subprocess.PIPE, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
-        out, err = process.communicate()
-        if out:
-            logger.info('Checker output: %s' % out)
-        if err:
-            logger.error('Checker error: %s' % err)
+        return process.communicate()
 
 class EmacsclientChecker(Checker):
 
@@ -32,13 +25,15 @@ class EmacsclientChecker(Checker):
 
 class SSHChecker(Checker):
 
-    def __init__(self, host, checker, *checker_args):
+    def __init__(self, host, checker=EmacsclientChecker(),
+                 checker_args=()):
         self.host = host
-        self.checker = load_checker_factory(checker)(*checker_args)
+        self.checker = checker
 
     def getArgs(self, *folders):
-        return ["ssh", self.host,
-                "'%s'" % self.checker.getArgs(*folders)]
+        command = ["'%s'" % arg
+                   for arg in self.checker.getArgs(*folders)]
+        return ["ssh", self.host] + command
 
 def load_checker_factory(checker):
     return pkg_resources.EntryPoint.parse(
