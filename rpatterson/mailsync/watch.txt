@@ -15,17 +15,12 @@ We start out with a maildir with one contained maildir.
     >>> os.listdir(foo)
     ['tmp', 'new', 'cur']
 
-Start with a checker that simply prints the folders it was told to
-check.
+Setup a watcher on the maildir with a checker that simply prints the
+folders it was told to check.
 
-    >>> def printChecker(*folders):
-    ...     print 'printChecker: '+' '.join(folders)
-
-Setup a watcher on the maildir.
-
-    >>> from rpatterson.mailsync import watch
+    >>> from rpatterson.mailsync import watch, testing
     >>> watcher = watch.Watcher(
-    ...     maildir=maildir, checker=printChecker)
+    ...     maildir=maildir, checker=testing.printChecker)
     >>> watcher_iter = iter(watcher)
 
 When the watcher first starts up, it returns a newline signaling that

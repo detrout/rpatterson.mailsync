@@ -1,5 +1,8 @@
 import os, tempfile, subprocess
 
+def printChecker(*folders):
+    print 'printChecker: '+' '.join(folders)
+
 def makeMaildir(*path):
     subprocess.Popen(['maildirmake', os.path.join(*path)]).wait()
 
