@@ -10,7 +10,14 @@ class Checker(object):
     def __call__(self, *folders):
         args = self.getArgs(*folders)
         logger.info("Running '%s'" % ' '.join(args))
-        subprocess.Popen(args).wait()
+        process = subprocess.Popen(
+            args , stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE)
+        out, err = process.communicate()
+        if out:
+            logger.info('Checker output: %s' % out)
+        if err:
+            logger.error('Checker error: %s' % err)
 
 class EmacsclientChecker(Checker):
 

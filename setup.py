@@ -31,6 +31,12 @@ tests_require = [
         'zope.testing',
     ]
 
+data_files = []
+site_lisp = os.path.join('/usr', 'local', 'share', 'emacs', 'site-lisp')
+if os.path.isdir(site_lisp):
+    data_files.append(
+        (site_lisp, [os.path.join('site-lisp', 'mailsync-gnus.el')]))
+
 setup(name='rpatterson.mailsync',
       version=version,
       description="",
@@ -48,6 +54,7 @@ setup(name='rpatterson.mailsync',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['rpatterson'],
       include_package_data=True,
+      data_files=data_files,
       zip_safe=False,
       install_requires=[
           'setuptools',
