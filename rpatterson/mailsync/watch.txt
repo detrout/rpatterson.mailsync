@@ -20,7 +20,7 @@ folders it was told to check.
 
     >>> from rpatterson.mailsync import watch, testing
     >>> watcher = watch.Watcher(
-    ...     maildir=maildir, checker=testing.printChecker)
+    ...     maildir=maildir, checker=testing.PrintingChecker())
     >>> watcher_iter = iter(watcher)
 
 When the watcher first starts up, it returns a newline signaling that

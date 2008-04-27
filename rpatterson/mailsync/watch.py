@@ -1,6 +1,8 @@
-import subprocess, optparse, pkg_resources, logging
+import subprocess, optparse, logging
 
 logger = logging.getLogger('rpatterson.mailsync')
+
+from rpatterson.mailsync import check
 
 class Watcher(object):
 
@@ -20,9 +22,9 @@ class Watcher(object):
 def main(args=None):
     parser = optparse.OptionParser()
     options, args = parser.parse_args(args=args)
-    maildir, checker = args
-    checker = pkg_resources.EntryPoint.parse(
-        'checker = %s' % checker).load(require=False)
+    maildir, checker = args[:2]
+    checker_factory = check.load_checker_factory(checker)
+    checker = checker_factory(*args[2:])
     for line in Watcher(maildir=maildir, checker=checker):
         print line,
 
