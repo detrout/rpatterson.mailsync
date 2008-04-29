@@ -1,9 +1,33 @@
-import os, signal, tempfile, subprocess, shutil
+import os, tempfile, subprocess, shutil
 
 class PrintingChecker(object):
 
     def __call__(self, *folders):
-        print 'printChecker: '+' '.join(folders)
+        out = ' '.join(self.getArgs(*folders))
+        print out
+        return out, ''
+
+    def getArgs(self, *folders):
+        return ('PrintingChecker:',)+folders
+
+class MovingChecker(object):
+
+    def __init__(self, src, dst):
+        self.src = src
+        self.dst = dst
+
+    def __call__(self, *folders):
+        out = ' '.join(self.getArgs(*folders))
+        print out
+        if os.path.isfile(self.src):
+            common = len(os.path.commonprefix([self.src, self.dst]))
+            print 'MovingChecker: moving %s to %s' %(
+                self.src[common:], self.dst[common:])
+            os.rename(self.src, self.dst)
+        return out, ''
+
+    def getArgs(self, *folders):
+        return ('MovingChecker:',)+folders
 
 def makeMaildir(*path):
     subprocess.Popen(['maildirmake', os.path.join(*path)]).wait()

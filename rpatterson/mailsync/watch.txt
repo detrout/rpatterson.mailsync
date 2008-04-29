@@ -29,7 +29,7 @@ it has started up, but before it does so, it tells the mua to do what
 it will on startup.
 
     >>> print script_watcher.stdout.readline(),
-    printChecker: 
+    PrintingChecker:
     >>> print script_watcher.stdout.readline(),
     <BLANKLINE>
 
@@ -41,28 +41,22 @@ that folder and then emit the folder name.
     >>> message.close()
 
     >>> print script_watcher.stdout.readline(),
-    printChecker: foo
+    PrintingChecker: foo
     >>> print script_watcher.stdout.readline(),
     foo
 
 Setup a new watcher with a checker that moves a message from the INBOX
 to the subfolder.
 
-    >>> inbound = os.path.join(maildir, 'new', '0')
-    >>> def moveChecker(*folders):
-    ...     print 'moveChecker: '+' '.join(folders)
-    ...     if folders and folders[0] == 'INBOX' and os.path.isfile(
-    ...         inbound):
-    ...         os.rename(inbound, os.path.join(foo, 'new', '1'))
-    ...         print ('moveChecker: '
-    ...                'moved Maildir/new/0 to Maildir/.foo/new/1')
-
     >>> from rpatterson.mailsync import watch, testing
+    >>> moveChecker = testing.MovingChecker(
+    ...     src=os.path.join(maildir, 'new', '0'),
+    ...     dst=os.path.join(foo, 'new', '1'))
     >>> watcher = watch.Watcher(
     ...     maildir=maildir, checker=moveChecker)
     >>> watcher_iter = iter(watcher)
     >>> print watcher_iter.next(),
-    moveChecker: 
+    MovingChecker:
     <BLANKLINE>
 
 Add a file to the INBOX.
@@ -76,16 +70,16 @@ the mail in that folder.  The checker will report this and move the
 file to the subfolder.
 
     >>> print watcher_iter.next(),
-    moveChecker: INBOX
-    moveChecker: moved Maildir/new/0 to Maildir/.foo/new/1
+    MovingChecker: INBOX
+    MovingChecker: moving new/0 to .foo/new/1
     INBOX
 
 Next, the watcher will note the removal from the INBOX folder and the
 addition to the subfolder and will check the mail in both locations.
 
     >>> print watcher_iter.next(),
-    moveChecker: INBOX
+    MovingChecker: INBOX
     INBOX
     >>> print watcher_iter.next(),
-    moveChecker: foo
+    MovingChecker: foo
     foo
