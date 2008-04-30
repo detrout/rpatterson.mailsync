@@ -1,0 +1,51 @@
+TODO
+----
+
+* Use optparse
+
+Add built-in help and clearer option and argument handling for the
+console scripts using optparse.
+
+* Invoke OfflineIMAP in the same process
+
+Currently, mailsync invokes OfflineIMAP as a subprocess which is a
+little wasteful given how heavy launching a python app can be.  I
+briefly looked at the OfflineIMAP code to see if it could be easily
+done but was disappointed.
+
+* Long running syncers
+
+Currently, mswatch invokes the sync process anew every time.  Pretty
+much any sync process establishes one or more network connections.
+There's no need to do this every time.  Better to have a long running
+sync process that mswatch can feed the folders to sync as they require
+syncing.  Implementing this would require modifying or reimplementing
+mswatch itself.
+
+* Ignore duplicate maildir notifications
+
+http://mswatch.sourceforge.net/#limitations
+
+As described on the mswatch page, every sync is redundantly issued
+twice.  To address this would require modifying or reimplementing
+mswatch itself.
+
+* maildrop and gnus splitting?
+
+Maybe have maildrop directly invoke Gnus splitting and feed incomming
+messages to be split at time of delivery.  This would eliminate
+redundant syncs on the INBOX where gnus would otherwise just
+immediately move the message into another folder.  This approach is,
+however, probably way to heavy for a maildrop pipeline.
+
+An alternative approach would be to use a maildir (~/Incomming)
+separate from the real INBOX maildir (~/Maildir) where mails would
+first be delivered.  This incomming maildir could be monitored using a
+checker/watcher whose only real purpose is to get gnus to check the
+incomming maildir and split messages.  The split would then move the
+message to the destination or fallback to the real INBOX maildir which
+would in turn trigger any real watchers/checkers used by mswatch.
+
+This approach requires no additional mailsync support.  It also keeps
+maildrop job small and light, decoupling the gnus splitting work from
+delivery.
