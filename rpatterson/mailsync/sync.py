@@ -4,7 +4,7 @@ from rpatterson.mailsync import check
 
 class Syncer(object):
 
-    def __init__(self, checkers, specs):
+    def __init__(self, specs, checkers=()):
         self.checkers = checkers
         self.accounts = {}
         self.folders = set()
@@ -89,6 +89,11 @@ def offlineimap_gnus_main(args=None):
         checkers=[
             check.EmacsclientChecker(), check.SSHChecker(host)],
         specs=specs)()
+
+def offlineimap_main(args=None):
+    parser = optparse.OptionParser()
+    options, args = parser.parse_args(args=args)
+    OfflineIMAPSyncer(specs=args)()
     
 if __name__ == '__main__':
     main()
