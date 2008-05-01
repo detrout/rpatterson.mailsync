@@ -1,5 +1,5 @@
-===========================
-rpatterson.mailsync package
-===========================
+===================
+rpatterson.mailsync
+===================
 
 for now see the package README
