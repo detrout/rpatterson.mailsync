@@ -20,9 +20,10 @@ folders it was told to check.
 
     >>> import subprocess
     >>> script_watcher = subprocess.Popen(
-    ...     ['inputkill', watcher_script, maildir,
-    ...      'rpatterson.mailsync.testing:PrintingChecker'],
-    ...     stdout=subprocess.PIPE)
+    ...     ['inputkill', '--', watcher_script,
+    ...      '--maildir=%s' % maildir,
+    ...      '--checker=rpatterson.mailsync.testing:PrintingChecker'],
+    ...     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 When the watcher first starts up, it returns a newline signaling that
 it has started up, but before it does so, it tells the mua to do what

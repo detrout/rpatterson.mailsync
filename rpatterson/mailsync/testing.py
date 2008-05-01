@@ -2,6 +2,9 @@ import os, tempfile, subprocess, shutil
 
 class PrintingChecker(object):
 
+    def __init__(self, **kw):
+        pass
+
     def __call__(self, *folders):
         out = ' '.join(self.getArgs(*folders))
         print out
@@ -12,7 +15,7 @@ class PrintingChecker(object):
 
 class MovingChecker(object):
 
-    def __init__(self, src, dst):
+    def __init__(self, src, dst, **kw):
         self.src = src
         self.dst = dst
 
