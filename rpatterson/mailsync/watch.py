@@ -82,6 +82,7 @@ def main(args=None):
 
 gnus_parser = optparse.OptionParser(description=Watcher.__doc__)
 gnus_parser.add_option(parser.get_option('--maildir'))
+gnus_parser.add_option(parser.get_option('--template'))
 parse.add_options(gnus_parser, check.EmacsclientChecker.parser,
                   'Emacsclient Checker') 
 
