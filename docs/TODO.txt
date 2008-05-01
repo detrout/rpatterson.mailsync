@@ -1,10 +1,10 @@
 TODO
 ----
 
-* Use optparse
+* Use optparse for syncers
 
 Add built-in help and clearer option and argument handling for the
-console scripts using optparse.
+syncers using optparse.
 
 * Invoke OfflineIMAP in the same process
 
