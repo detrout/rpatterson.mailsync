@@ -15,6 +15,10 @@ parser.add_option(
     'Override the setting of the $MAILDIR environment variable (or '
     '~/Maildir if $MAILDIR is not defined) with DIR.')
 parser.add_option(
+    '-t', '--template', default='%s', help=
+    'Folder names are expanded using this Python sring template '
+    'before processing [default: %default]')
+parser.add_option(
     '-c', '--checker', type="string", action='callback',
     callback=check.get_checker, metavar='ENTRYPOINT', help=
     'Check folder using the checker at the stuptools ENTRYPOINT when '
@@ -25,13 +29,15 @@ class Watcher(object):
     __doc__ = __doc__
 
     def __init__(self, maildir=parser.defaults['maildir'],
-                 checker=check.EmacsclientChecker(), **kw):
+                 checker=parser.defaults['checker'](),
+                 template=parser.defaults['template'], **kw):
         args = ['watch_maildirs']
         if maildir is not None:
             args.append('--maildir=%s' % maildir)
         logger.info("Running '%s'" % ' '.join(args))
         self.watcher = subprocess.Popen(
             args , stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        self.template = template
         self.checker = checker
 
     # TODO iteration *should* work, but for some reason it blocks
@@ -39,13 +45,15 @@ class Watcher(object):
     #     for line in self.watcher.stdout:
     #         self.checker(*line.strip().split())
     #         yield line
-
+    
     def __iter__(self):
         while self.watcher.poll() is None:
             line = self.watcher.stdout.readline()
             if line:
-                self.check(line)
-                yield line
+                folders = [self.template % folder
+                           for folder in line.strip().split()]
+                self.check(folders)
+                yield ' '.join(folders)+'\n'
 
     def __del__(self):
         """Ensure the watcher process is always killed on exit"""
@@ -53,8 +61,7 @@ class Watcher(object):
             os.kill(self.watcher.pid, signal.SIGTERM)
             self.watcher.wait()
 
-    def check(self, line):
-        folders = line.strip().split()
+    def check(self, folders):
         logger.info("Running '%s'" % ' '.join(
             self.checker.getArgs(*folders)))
         out, err = self.checker(*folders)

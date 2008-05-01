@@ -16,12 +16,13 @@ We start out with a maildir with one contained maildir.
     ['tmp', 'new', 'cur']
 
 Setup a watcher on the maildir with a checker that simply prints the
-folders it was told to check.
+folders it was told to check.  This watcher will also use a template
+to prepend a prefix to the folder names.
 
     >>> import subprocess
     >>> script_watcher = subprocess.Popen(
     ...     ['inputkill', '--', watcher_script,
-    ...      '--maildir=%s' % maildir,
+    ...      '--maildir=%s' % maildir, '--template=prefix.%s',
     ...      '--checker=rpatterson.mailsync.testing:PrintingChecker'],
     ...     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -42,9 +43,9 @@ that folder and then emit the folder name.
     >>> message.close()
 
     >>> print script_watcher.stdout.readline(),
-    PrintingChecker: foo
+    PrintingChecker: prefix.foo
     >>> print script_watcher.stdout.readline(),
-    foo
+    prefix.foo
 
 Setup a new watcher with a checker that moves a message from the INBOX
 to the subfolder.
