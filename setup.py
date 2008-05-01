@@ -30,7 +30,6 @@ HISTORY = os.path.join(
 
 long_description = '\n\n'.join(
     open(file_).read() for file_ in [README, TODO, HISTORY])
-print long_description
 
 tests_require = [
         'zope.testing',
