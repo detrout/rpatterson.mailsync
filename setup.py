@@ -24,8 +24,13 @@ version = '0.1'
 
 README = os.path.join(
     os.path.dirname(__file__), 'rpatterson', 'mailsync', 'README.txt')
+TODO = os.path.join(os.path.dirname(__file__), 'docs', 'TODO.txt')
+HISTORY = os.path.join(
+    os.path.dirname(__file__), 'docs', 'HISTORY.txt')
 
-long_description = open(README).read() + '\n\n'
+long_description = '\n\n'.join(
+    open(file_).read() for file_ in [README, TODO, HISTORY])
+print long_description
 
 tests_require = [
         'zope.testing',
@@ -66,10 +71,7 @@ setup(name='rpatterson.mailsync',
       entry_points="""
       # -*- Entry points: -*-
       [console_scripts]
-      mailsync_watch = rpatterson.mailsync.watch:main
       mailsync_gnus_watch = rpatterson.mailsync.watch:gnus_main
-      mailsync_sync = rpatterson.mailsync.sync:main
       mailsync_offlineimap = rpatterson.mailsync.sync:offlineimap_main
-      mailsync_offlineimap_gnus = rpatterson.mailsync.sync:offlineimap_gnus_main
       """,
       )
