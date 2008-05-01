@@ -9,9 +9,7 @@ Changelog
 0.0 - Backstory
 ---------------
 
-http://groups.google.com/group/linux.debian.user/msg/7594165a2b6d1c49
-
-It is amazing that MUAs do indeed still suck.  In my case this is
+It is amazing that `MUAs do indeed still suck`_.  In my case this is
 exacerbated by a strong preference to use Gnus as my MUA.  Thunderbird
 may be great, but since it lacks good integration with Emacs (and no,
 emacsclient external editor is not enoug), it really doesn't matter.
@@ -95,3 +93,5 @@ There are many things about this solution that are hackish and
 inefficient so I'd say it's somewhere between %75 and %80 there, as it
 were.  Given, however, that no previous solution has even broken %50
 I'm happy as a clam for now.
+
+.. _`MUAs do indeed still suck`: http://groups.google.com/group/linux.debian.user/msg/7594165a2b6d1c49 
