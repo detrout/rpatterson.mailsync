@@ -6,6 +6,16 @@ TODO
 Add built-in help and clearer option and argument handling for the
 syncers using optparse.
 
+* Use delay in watchers/checkers
+
+Currently, the checkers run every time the watcher emits a folder
+name.  Most maildir changes emit the same folder multiple times
+resulting in the checker running reduntantly.  With mswatch, the logic
+for coalescing events using a delay is in the mswatch process.  To
+address this problem, that logic would have to be extended to the
+watchers.  This is another reason among many for reimplementing
+mswatch.
+
 * Invoke OfflineIMAP in the same process
 
 Currently, mailsync invokes OfflineIMAP as a subprocess which is a
@@ -56,7 +66,8 @@ delivery.
 
 An advantage of either approach is that mail would be split on the
 server even when the local mswatch wasn't connected.  As it is now,
-mail is only split when mswatch is running.
+mail is only split when mswatch is running or if the Gnus running on
+the server checks all mail periodically.
 
 * Use Gamin
 
