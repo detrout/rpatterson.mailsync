@@ -16,8 +16,11 @@ parser.add_option(
     '~/Maildir if $MAILDIR is not defined) with DIR.')
 parser.add_option(
     '-t', '--template', default='%s', help=
-    'Folder names are expanded using this Python sring template '
-    'before processing [default: %default]')
+    'Folder names are expanded using TEMPLATE, a Python string '
+    'template, before processing [default: %default]')
+parser.add_option(
+    '-i', '--inbox', default='INBOX', metavar='STRING', help=
+    'Substitute STRING for the INBOX folder [default: %default]')
 parser.add_option(
     '-c', '--checker', type="string", action='callback',
     callback=check.get_checker, metavar='ENTRYPOINT', help=
@@ -29,8 +32,9 @@ class Watcher(object):
     __doc__ = __doc__
 
     def __init__(self, maildir=parser.defaults['maildir'],
-                 checker=parser.defaults['checker'](),
-                 template=parser.defaults['template'], **kw):
+                 template=parser.defaults['template'],
+                 inbox=parser.defaults['inbox'],
+                 checker=parser.defaults['checker'](), **kw):
         args = ['watch_maildirs']
         if maildir is not None:
             args.append('--maildir=%s' % maildir)
@@ -38,6 +42,7 @@ class Watcher(object):
         self.watcher = subprocess.Popen(
             args , stdin=subprocess.PIPE, stdout=subprocess.PIPE)
         self.template = template
+        self.inbox = inbox
         self.checker = checker
 
     # TODO iteration *should* work, but for some reason it blocks
@@ -50,8 +55,7 @@ class Watcher(object):
         while self.watcher.poll() is None:
             line = self.watcher.stdout.readline()
             if line:
-                folders = [self.template % folder
-                           for folder in line.strip().split()]
+                folders = self.fromLine(line)
                 self.check(folders)
                 yield ' '.join(folders)+'\n'
 
@@ -61,6 +65,14 @@ class Watcher(object):
             os.kill(self.watcher.pid, signal.SIGTERM)
             self.watcher.wait()
 
+    def fromLine(self, line):
+        folders = []
+        for folder in line.strip().split():
+            if folder == 'INBOX':
+                folder = self.inbox
+            folders.append(self.template % folder)
+        return folders
+        
     def check(self, folders):
         logger.info("Running '%s'" % ' '.join(
             self.checker.getArgs(*folders)))
