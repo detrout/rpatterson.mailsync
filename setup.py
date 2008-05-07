@@ -17,10 +17,10 @@
 """
 This module contains the tool of rpatterson.mailsync
 """
-import os
+import os, sys
 from setuptools import setup, find_packages
 
-version = '0.1'
+version = '0.2'
 
 README = os.path.join(
     os.path.dirname(__file__), 'rpatterson', 'mailsync', 'README.txt')
@@ -35,15 +35,19 @@ tests_require = [
         'zope.testing',
     ]
 
-data_files = []
-site_lisp = os.path.join('/usr', 'local', 'share', 'emacs', 'site-lisp')
-if os.path.isdir(site_lisp):
-    data_files.append(
-        (site_lisp, [os.path.join('site-lisp', 'mailsync-gnus.el')]))
+site_lisp = os.path.join('site-lisp')
+mailsync_gnus_el = os.path.join('site-lisp', 'mailsync-gnus.el')
+if 'install' in sys.argv:
+    sys_site_lisp = os.path.join(
+        '/usr', 'local', 'share', 'emacs', site_lisp)
+    if os.path.isdir(sys_site_lisp):
+        site_lisp = sys_site_lisp
+data_files = [(site_lisp, [mailsync_gnus_el])]
 
 setup(name='rpatterson.mailsync',
       version=version,
-      description="",
+      description="Integration between mswatch, OfflineIMAP, and "
+      "Gnus for realtime mail", 
       long_description=long_description,
       # Get more strings from http://www.python.org/pypi?%3Aaction=list_classifiers
       classifiers=[

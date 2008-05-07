@@ -2,6 +2,10 @@
 rpatterson.mailsync
 ===================
 
+Integration between mswatch, OfflineIMAP, and Gnus for realtime mail
+
+.. contents::
+
 This package provides some scripts that wrap parts of mswatch and
 OfflineIMAP and integrate with Gnus to provide a local maildir that
 is synchronized with a remote maildir as changes occur, instead of
@@ -30,10 +34,27 @@ All you need is easy_install_::
 
   $ easy_install rpatterson.mailsync
 
-If you have a /usr/local/emacs/site-lisp directory, the
-mailsync-gnus.el library will be installed there.  To use the
+The mailsync-gnus.el library will be installed in the site-lisp
+directory in the egg.  To use the library, you'll need to add this
+path to your emacs load-path.  It should be something like the
+following but be sure to substitute the question marks with the
+appropriate values for your version of Python, the version of
+rpatterson.mailsync, and your easy_install site-dirs::
+
+    /usr/lib/python?.?/site-packages/rpatterson.mailsync-?-py?.?.egg/site-lisp/
+
+Alternatively, if you have a /usr/local/emacs/site-lisp directory, the
+mailsync-gnus.el library can be installed into that directory if you
+install rpatterson.mailsync from a source distribution.  You can still
+use easy_install to get the source distribution::
+
+  $ easy_install --editable --build-directory=/usr/local/src rpatterson.mailsync
+  $ cd /usr/local/src/rpatterson.mailsync/
+  $ python setup.py install
+
+Once the library is on Emacs' load-path, to use the
 mailsync/gnus-check function, you'll need to make sure it's loaded in
-your emacs.  You can do this by adding the following to your .gnus.el::
+your Emacs.  You can do this by adding the following to your .gnus.el::
 
     (load-library "mailsync-gnus")
 
