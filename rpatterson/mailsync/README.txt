@@ -58,10 +58,24 @@ your Emacs.  You can do this by adding the following to your .gnus.el::
 
     (load-library "mailsync-gnus")
 
-To use mswatch, copy the example ~/.mswatchrc to your home directory
-and see the "MAILSYNC:" comments for what to change.  Use
+If you'll be using mailsync_offlineimap to synchronize your mail,
+start by configuring OfflineIMAP as per the OfflineIMAP
+documentation.  Once OfflineIMAP is verified working, verify
+mailsync_offlineimap by running it from the console.
+
+On any machine where you'll be using the maildir watchers, either with
+or without mswatch, see the mswatch documentation and verify that
+watch_maildirs works.  Install rpatterson.mailsync wherever you want
+to use mailsync_gnus_watch.  Run it from the console to test it.  It
+should check all groups in Gnus and output a blank line when it's
+started up and then it should check any changed maildir folder groups
+in Gnus when changed and then omit the folder name. Use
 "mailsync_gnus_watch --help" to see what options are available to
-modifying the watcher behavior::
+modifying the watcher behavior.
+
+To use mswatch, see the mswatch documentation but base your
+~/.mswatchrc on the following and see the "MAILSYNC:" comments for
+what to change::
 
     # minimum time after first queued mailbox change to synchronization (default: 10s)
     #base_delay 10
@@ -95,8 +109,8 @@ modifying the watcher behavior::
     	# see 'man watch_maildirs' to tell watch_maildirs where to find mail
     	# watch watch_maildirs
     
-            # MAILSYNC: use the following to have your local Gnus check
-            # folders as they change, otherwise, just use the above.
+        # MAILSYNC: use the following to have your local Gnus check
+        # folders as they change, otherwise, just use the above.
     	watch mailsync_gnus_watch
     }
     
@@ -111,8 +125,8 @@ modifying the watcher behavior::
     	# promptly exits if the connection dies.
             # watch ssh -o BatchMode=yes foo.com inputkill watch_maildirs
     
-            # MAILSYNC: use the following to have your remote Gnus check
-            # folders as they change, otherwise, just use the above.
+        # MAILSYNC: use the following to have your remote Gnus check
+        # folders as they change, otherwise, just use the above.
     	watch ssh -o BatchMode=yes foo.com inputkill mailsync_gnus_watch
     }
 
