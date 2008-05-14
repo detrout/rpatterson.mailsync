@@ -20,7 +20,7 @@ This module contains the tool of rpatterson.mailsync
 import os, sys
 from setuptools import setup, find_packages
 
-version = '0.3'
+version = '0.4'
 
 README = os.path.join(
     os.path.dirname(__file__), 'rpatterson', 'mailsync', 'README.txt')
