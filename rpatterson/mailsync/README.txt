@@ -97,7 +97,8 @@ what to change::
     # setup to sync folders on change.
     sync mailsync_offlineimap
     
-    # prefix this string to sync's mailboxes; useful as mbsync channel (optional)
+    # prefix this string to sync's mailboxes; 
+    #     useful as mbsync channel or OfflineIMAP account.
     # the first string ("mydomain") is always prefixed
     # the second string (":") is prefixed only when syncing a particular mailbox
     mailbox_prefix foo :

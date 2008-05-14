@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.3 - 2008-05-13
+----------------
+
+* Clarify and correct documentation
+
 0.2 - 2008-05-07
 ----------------
 
