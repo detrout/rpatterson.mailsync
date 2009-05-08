@@ -42,7 +42,7 @@ class EmacsclientChecker(Checker):
 
     def getArgs(self, *folders):
         folders = ' '.join(
-            ('"%s"' % folder for folder in folders))
+            ('"%s"' % folder.replace('/', '.') for folder in folders))
         return ['emacsclient', '--eval',
                 '(%s (quote (%s)))' % (self.elisp_func, folders)]
 
