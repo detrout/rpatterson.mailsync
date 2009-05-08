@@ -90,6 +90,12 @@ def offlineimap_gnus_main(args=None):
             check.EmacsclientChecker(), check.SSHChecker(host)],
         specs=specs)()
 
+def offlineimap_gnus_local(args=None):
+    parser = optparse.OptionParser()
+    options, args = parser.parse_args(args=args)
+    OfflineIMAPSyncer(
+        checkers=[check.EmacsclientChecker()], specs=args)()
+
 def offlineimap_main(args=None):
     parser = optparse.OptionParser()
     options, args = parser.parse_args(args=args)
