@@ -35,8 +35,9 @@ class Syncer(object):
                 for account, error_folders in errors.iteritems()))
 
     def __call__(self):
-        self.sync()
-        self.check()
+        """If the sync is successful then run the checkers"""
+        if self.sync() == 0:
+            self.check()
 
     def sync(self):
         raise NotImplementedError
@@ -64,7 +65,7 @@ class OfflineIMAPSyncer(Syncer):
             args.extend(['-f', ','.join(self.folders)])
     
         print '+', ' '.join(args)
-        subprocess.Popen(args).wait()
+        return subprocess.Popen(args).wait()
 
 def load_syncer_factory(syncer):
     return pkg_resources.EntryPoint.parse(
