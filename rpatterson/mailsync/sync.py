@@ -1,4 +1,7 @@
-import subprocess, optparse, pkg_resources
+import sys
+import subprocess
+import optparse
+import pkg_resources
 
 from rpatterson.mailsync import check
 
@@ -36,8 +39,10 @@ class Syncer(object):
 
     def __call__(self):
         """If the sync is successful then run the checkers"""
-        if self.sync() == 0:
+        returncode = self.sync()
+        if returncode == 0:
             self.check()
+        return returncode
 
     def sync(self):
         raise NotImplementedError
@@ -79,28 +84,28 @@ def main(args=None):
     specs = args[3:]
     checkers = [
         check.load_checker_factory(checker)() for checker in checkers]
-    load_syncer_factory(syncer)(checkers, specs)()
+    sys.exit(load_syncer_factory(syncer)(checkers, specs)())
 
 def offlineimap_gnus_main(args=None):
     parser = optparse.OptionParser()
     options, args = parser.parse_args(args=args)
     host = args[0]
     specs = args[1:]
-    OfflineIMAPSyncer(
+    sys.exit(OfflineIMAPSyncer(
         checkers=[
             check.EmacsclientChecker(), check.SSHChecker(host)],
-        specs=specs)()
+        specs=specs)())
 
 def offlineimap_gnus_local(args=None):
     parser = optparse.OptionParser()
     options, args = parser.parse_args(args=args)
-    OfflineIMAPSyncer(
-        checkers=[check.EmacsclientChecker()], specs=args)()
+    sys.exit(OfflineIMAPSyncer(
+        checkers=[check.EmacsclientChecker()], specs=args)())
 
 def offlineimap_main(args=None):
     parser = optparse.OptionParser()
     options, args = parser.parse_args(args=args)
-    OfflineIMAPSyncer(specs=args)()
+    sys.exit(OfflineIMAPSyncer(specs=args)())
     
 if __name__ == '__main__':
     main()

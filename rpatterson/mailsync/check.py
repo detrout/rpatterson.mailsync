@@ -1,7 +1,10 @@
 """Perform some action such as having an MUA check mail on the folders
 to be synchronized."""
 
-import subprocess, pkg_resources, optparse
+import sys
+import subprocess
+import pkg_resources
+import optparse
 
 from rpatterson.mailsync import parse
 
@@ -21,7 +24,10 @@ class Checker(object):
         process = subprocess.Popen(
             args , stdin=subprocess.PIPE, stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
-        return process.communicate()
+        out = process.communicate()
+        if process.returncode:
+            sys.exit(process.returncode)
+        return out
 
 class EmacsclientChecker(Checker):
     """Call an arbitrary elisp function in a running emacs using

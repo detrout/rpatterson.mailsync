@@ -1,9 +1,15 @@
 """Watch a given Maildir and returning change notifications optionally
 checking changed folders before returning the notification"""
 
-import os, sys, signal, subprocess, optparse, logging
+import os
+import sys
+import signal
+import subprocess
+import optparse
+import logging
 
-from rpatterson.mailsync import parse, check
+from rpatterson.mailsync import parse
+from rpatterson.mailsync import check
 
 logging.basicConfig()
 logger = logging.getLogger('rpatterson.mailsync')
@@ -52,16 +58,22 @@ class Watcher(object):
     #         yield line
     
     def __iter__(self):
-        while self.watcher.poll() is None:
+        returncode = self.watcher.poll()
+        while returncode is None:
             line = self.watcher.stdout.readline()
             if line:
                 folders = self.fromLine(line)
                 self.check(folders)
                 yield ' '.join(folders)+'\n'
-
+            returncode = self.watcher.poll()
+        else:
+            if returncode:
+                sys.exit(returncode)
+            
     def __del__(self):
         """Ensure the watcher process is always killed on exit"""
-        if self.watcher.poll() is None:
+        returncode = self.watcher.poll()
+        if returncode is None:
             os.kill(self.watcher.pid, signal.SIGTERM)
             self.watcher.wait()
 
