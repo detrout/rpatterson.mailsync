@@ -31,9 +31,7 @@ HISTORY = os.path.join(
 long_description = '\n\n'.join(
     open(file_).read() for file_ in [README, TODO, HISTORY])
 
-tests_require = [
-        'zope.testing',
-    ]
+tests_require = ['zope.testing']
 
 site_lisp = os.path.join('site-lisp')
 mailsync_gnus_el = os.path.join('site-lisp', 'mailsync-gnus.el')
