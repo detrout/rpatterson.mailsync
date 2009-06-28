@@ -1,8 +1,19 @@
 Changelog
 =========
 
-0.4 - UNRELEASED
+0.4 - 2009-06-28
 ----------------
+
+* Propogate non-zero return codes from subprocesses so that mswatch
+  can know to restart things.
+
+* Don't check if the sync fails, allows mswatch to keep trying to sync
+  when offline without constantly making the checkers run
+
+* Add another syncer for offlineimap with a local-only gnus checker
+
+* Translate Gmail and Gnus IMAP folder separators
+
 
 0.3 - 2008-05-13
 ----------------
