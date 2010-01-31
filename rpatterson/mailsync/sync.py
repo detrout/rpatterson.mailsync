@@ -25,7 +25,7 @@ class Syncer(object):
                 self.folders.add(folder)
 
         errors = {}
-        for account, account_folders in self.accounts. iteritems():
+        for account, account_folders in self.accounts.iteritems():
             if account_folders != self.folders:
                 errors[account] = self.folders.symmetric_difference(
                     account_folders)
@@ -45,7 +45,8 @@ class Syncer(object):
         return returncode
 
     def sync(self):
-        raise NotImplementedError
+        """Null sync, used only for the checker"""
+        return 0
 
     def check(self):
         for checker in self.checkers:
@@ -100,6 +101,12 @@ def offlineimap_gnus_local(args=None):
     parser = optparse.OptionParser()
     options, args = parser.parse_args(args=args)
     sys.exit(OfflineIMAPSyncer(
+        checkers=[check.EmacsclientChecker()], specs=args)())
+
+def gnus_local(args=None):
+    parser = optparse.OptionParser()
+    options, args = parser.parse_args(args=args)
+    sys.exit(Syncer(
         checkers=[check.EmacsclientChecker()], specs=args)())
 
 def offlineimap_main(args=None):

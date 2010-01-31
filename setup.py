@@ -76,5 +76,6 @@ setup(name='rpatterson.mailsync',
       mailsync = rpatterson.mailsync.sync:main
       mailsync_offlineimap = rpatterson.mailsync.sync:offlineimap_main
       mailsync_offlineimap_local = rpatterson.mailsync.sync:offlineimap_gnus_local
+      mailsync_gnus_sync = rpatterson.mailsync.sync:gnus_local
       """,
       )
